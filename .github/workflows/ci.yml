@@ -1,0 +1,36 @@
+name: Integración continua
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Pruebas con Node.js 22
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar sintaxis
+        run: npm run check
+
+      - name: Ejecutar pruebas
+        run: npm test
+
+      - name: Auditar dependencias de producción
+        run: npm audit --omit=dev --audit-level=high

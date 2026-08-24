@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: hybridge-blog-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hybridge-blog-db
+          property: connectionString
+
+databases:
+  - name: hybridge-blog-db
+    plan: free
+    databaseName: hybridge_blog
+    user: hybridge_blog_user
